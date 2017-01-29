@@ -9,20 +9,20 @@ type SortedDict{K, D, Ord <: Ordering} <: Associative{K,D}
     SortedDict(o::Ord) = new(BalancedTree23{K,D,Ord}(o))
 
     function SortedDict(o::Ord, kv)
-        s = new(BalancedTree23{K,D,Ord}(o))
+        sd = new(BalancedTree23{K,D,Ord}(o))
 
         if eltype(kv) <: Pair
             # It's (possibly?) more efficient to access the first and second
             # elements of Pairs directly, rather than destructure
             for p in kv
-                s[p.first] = p.second
+                sd[p.first] = p.second
             end
         else
             for (k,v) in kv
-                s[k] = v
+                sd[k] = v
             end
         end
-        return s
+        return sd
     end
 
 end

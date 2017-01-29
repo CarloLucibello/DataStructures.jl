@@ -297,16 +297,33 @@ function setdiff!(m1::SortedSet, iterable)
 end
 
 
+if VERSION < v"0.6.0-dev.2123"
+    (==){O}(l::SortedSet{TypeVar(:K1),O},
+            r::SortedSet{TypeVar(:K2),O}) = (length(l) == length(r)) && (l <= r)
+else
+    include_string("""
+        function (==)(l::SortedSet{K1,V1,O} where K1 where V1,
+                      r::SortedSet{K2,V2,O} where K2 where V2) where O
+            return (length(l) == length(r)) && (l <= r)
+        end
+        """)
+end
+
+<( l::SortedSet, r::SortedSet) = (length(l) < length(r)) && (l <= r)
+<=(l::SortedSet, r::SortedSet) = issubset(l, r)
 
 function issubset(iterable, m2::SortedSet)
     for k in iterable
-        if !in(k, m2)
+        if !(k in m2)
             return false
         end
     end
     return true
 end
+#const ⊆ = issubset  ## defined in Base
 
+⊊(l::SortedSet, r::SortedSet) = <(l, r)
+⊈(l::SortedSet, r::SortedSet) = !⊆(l, r)
 
 function packcopy{K,Ord <: Ordering}(m::SortedSet{K,Ord})
     w = SortedSet(K[], orderobject(m))

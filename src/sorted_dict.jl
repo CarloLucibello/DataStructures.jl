@@ -31,12 +31,6 @@ end
 SortedDict() = SortedDict{Any,Any,ForwardOrdering}(Forward)
 SortedDict{Ord <: Ordering}(o::Ord) = SortedDict{Any,Any,Ord}(o)
 
-function not_iterator_of_pairs(kv)
-    return any(x->isempty(methodswith(typeof(kv), x, true)),
-               [start, next, done]) ||
-           any(x->!isa(x, Union{Tuple,Pair}), kv)
-end
-
 # Construction from Pairs
 # TODO: fix SortedDict(1=>1, 2=>2.0)
 SortedDict(ps::Pair...) = SortedDict(Forward, ps)
